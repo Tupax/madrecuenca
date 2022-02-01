@@ -7,8 +7,6 @@ class Card {
       this.phone = phone;
       this.fecha = fecha;
     }
-
-
 }
 
 var Airtable = require('airtable');
@@ -17,7 +15,7 @@ var base = new Airtable({apiKey: 'key64dRqz2W6akikD'}).base('appwF7020jRFGCAly')
 
 const table = base('Cuenco Card');
 
-var CuencoCards =[];
+var CuencoCardsAirtable =[];
 
 let runlastdate = new Date();
 
@@ -36,7 +34,7 @@ table.select({
         
         let card = new Card(record.get('CC#'),record.get('Cédula'),record.get('Cuencos'),record.get('URLs'),record.get('Phone'),record.get('Fecha'));
 
-        CuencoCards.push(card);
+        CuencoCardsAirtable.push(card);
         
     });
 
@@ -47,15 +45,23 @@ table.select({
     if (err) { console.error(err); return; }
 
     
-    CuencoCards.forEach(card => {
+    CuencoCardsAirtable.forEach(card => {
         console.log(card);
 
-        // Si existe en WF, modificar numero de cuencos
 
+        // Si existe en WF, modificar numero de cuencos
         // Si no existe, Crear item
-        
+
     });
-    
+
+    if (CuencoCardsAirtable.length === 0){
+        console.log("No hay nuevas entradas");
+    }
+
+
+
+
+
     
 
 
