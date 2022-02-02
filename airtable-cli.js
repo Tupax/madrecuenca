@@ -1,11 +1,12 @@
 class Card {
-    constructor(ccid, cedula,cuencos,url,phone,fecha) {
+    constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
       this.id = ccid;
       this.cedula = cedula;
-      this.cuencos = cuencos;
+      this.cuencos = parseInt(cuencos);
       this.url = url;
       this.phone = phone;
       this.fecha = fecha;
+      this.recipiente = parseInt(recipiente);
     }
 }
 
@@ -25,14 +26,14 @@ let t =runlastdate.toISOString();
 
 table.select({
     view: "Suscripción",
-    fields: ["CC#","Cédula", "Cuencos", "Last Modified","URLs","Phone","Fecha"],
+    fields: ["CC#","Cédula", "Cuencos", "Last Modified","URLs","Phone","Fecha","Descuento Envase"],
     filterByFormula: "IS_AFTER({Last modified},TODAY())"
 }).eachPage(function page(records, fetchNextPage) {
     
     records.forEach(function(record) {
 
         
-        let card = new Card(record.get('CC#'),record.get('Cédula'),record.get('Cuencos'),record.get('URLs'),record.get('Phone'),record.get('Fecha'));
+        let card = new Card(record.get('CC#'),record.get('Cédula'),record.get('Cuencos'),record.get('URLs'),record.get('Phone'),record.get('Fecha'),record.get('Descuento Envase'));
 
         CuencoCardsAirtable.push(card);
         
@@ -57,13 +58,6 @@ table.select({
     if (CuencoCardsAirtable.length === 0){
         console.log("No hay nuevas entradas");
     }
-
-
-
-
-
-    
-
 
 });
 

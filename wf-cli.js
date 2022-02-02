@@ -1,17 +1,19 @@
 class Card {
-    constructor(ccid, cedula,cuencos,url,phone,fecha) {
+    constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
       this.id = ccid;
       this.cedula = cedula;
       this.cuencos = cuencos;
       this.url = url;
       this.phone = phone;
       this.fecha = fecha;
+      this.recipiente = recipiente;
     }
 }
 
 var CuencoCardsWebFflow =[];
 
 
+const { stringify } = require('qs');
 const Webflow = require('webflow-api');
 
 // Initialize the API
@@ -73,65 +75,92 @@ function  dosomething(allitems){
         console.log(row);    
         console.log(i);    
     }
-    console.log("after dosomething");
-
-    
+    console.log("after dosomething");   
 }
 
-
-let cca = new Card ('CCx8101',12345678,7,'urltest',099771790,'January 31, 2022');
-let cca2 = new Card ('CCx8101',12345678,7,'urltest',099771790,'January 31, 2022');
+// TEST
+let cca = new Card ('CCx8001',12345678,7,'urltest',099771790,'2022-02-02');
+let cca3 = new Card ('CCx8101',12345678,7,'urltest',099771790,'2022-02-02');
+let cca2 = new Card ('CCx8002',12345678,7,'urltest',099771790,'2022-02-02');
 var CuencoCardsAirtable =[];
-
 CuencoCardsAirtable.push(cca);  
 CuencoCardsAirtable.push(cca2);
+CuencoCardsAirtable.push(cca3);
+// console.log(CuencoCardsAirtable);
+// CuencoCardsAirtable.forEach(element => {
+    // CuencoCardsAirtable = CuencoCardsAirtable.filter((element) => element.id !== 'CCx8101'); });
+// console.log("after: ");
+// console.log(CuencoCardsAirtable);
 
-console.log(CuencoCardsAirtable);
 
 
 // --------
 // Get All Items
 // --------
-function getItems(id) {
-const items = api.items({ collectionId: id }, { limit: 100 });
+function getItems(collectionid) {
+const items = api.items({ collectionId: collectionid }, { limit: 100 });
 items.then((info) => {
-    // Filtar cuencos que sea necesario actualizar
-    // Filtrar cuencos que 
-    console.log(info);
+    // Filtar cuencos que sea necesario actualizar en WF
+    // Filtrar cuencos que se tegan que crear en WF
+   
     info.items.forEach(i => {
-
-
-
-        // var newArray = myArray.filter( (element, index, array) => { 
-        //     ... Items passing this condition will be added to the new array...
-        //     })
+   
+        console.log(i);
+    // 1. Busco los CC registrados
+        CuencoCardsAirtable.forEach(e => {    
+            if(i.name == e.id){
             
-        
-        var myArray = [{id:1, name:'Morty'},{id:2, name:'Rick'},{id:3, name:'Anna'}];
-var newArray = myArray.filter((item) => item.id !== 1);
-console.log(newArray);
+                if(i.cuencos !== e.cuencos){
+                // hacer update de cuenco
+                // let  fields = {}
+                console.log("UPDATE : ", e.id);
+                }
 
-
-        CuencoCardsAirtable.forEach(cca => {
-            if(cca.id == i.name){
-            // hacer update de cuenco
-            //Eliminar del array
-            }         
+            // Sino soloQuito esta cc del array porque ya esta realizado
+            CuencoCardsAirtable = CuencoCardsAirtable.filter((element) => element.id !== i.name); 
+            }   
         });
-
-        console.log("NAME: ", i.name);
-
     });
-}).then(function() {
-    console.log("now filter if there is");
 
+    if (CuencoCardsAirtable.length > 0){
+        // Crear un item nuevo en WF por cada item nuevo
+
+    
+
+        
+        CuencoCardsAirtable.forEach(e=> {
+            e.fecha = new Date(e.fecha);
+            e.fecha = e.fecha.toISOString();
+            let slug = e.id.substring(e.id.length - 3);
+            let fields= {
+                'fecha': e.fecha.toString(),
+                '_archived': false,
+                '_draft': false,
+                'cedula': e.cedula,
+                'phone': e.phone.toString(),
+                'name':e.id,
+                'slug': slug,
+                'cuencos': e.cuencos,
+              
+            }
+            api.createItem({
+                collectionId:collectionid,
+                fields: fields
+            })
+        
+        })
+    }
+
+}).then(function() {
+    const published = api.publishSite({siteId:siteid,domains:['madrecuenca.uy','www.madrecuenca.uy']});
+    published.then(p => console.log(p));
 
 })
 }
 
 
 // cuencos x8
-// getItems('61f90e5c7a457c3409dff91d');
+getItems('61f90e5c7a457c3409dff91d');
 
 
 
@@ -139,5 +168,3 @@ console.log(newArray);
 
 
 //callectionid = 61f90e5c7a457c3409dff91d
-
-

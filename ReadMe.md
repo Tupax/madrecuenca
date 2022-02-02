@@ -30,6 +30,6 @@ $ yarn add webflow-api
 - [x] Setup Webflow API
 - [x] Setup Airtable API
 - [x] Filter Airtable CC by the last modified on TODAY()
-- [ ] Merge data
+- [x] Merge data
 - [ ] Host node app
 - [ ] Cron 
