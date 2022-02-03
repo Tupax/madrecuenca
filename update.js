@@ -1,3 +1,6 @@
+var log = require('./log-cli.js');
+
+
 class Card {
     constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
       this.id = ccid;
@@ -19,13 +22,6 @@ var base = new Airtable({apiKey: 'key64dRqz2W6akikD'}).base('appwF7020jRFGCAly')
 const table = base('Cuenco Card');
 
 var CuencoCardsAirtable =[];
-
-let runlastdate = new Date();
-
-
-let t =runlastdate.toISOString();
-
-
 
 const Webflow = require('webflow-api');
 // Initialize the API
@@ -54,6 +50,7 @@ table.select({
 }, function done(err) {
     
     if (err) { console.error(err); return; }
+    console.log("Airtable data");
 
 
 
@@ -63,11 +60,13 @@ table.select({
 
     const items = api.items({ collectionId: collectionid }, { limit: 100 });
     items.then((info) => {
+        console.log("WF data");
         // Filtar cuencos que sea necesario actualizar en WF
         // Filtrar cuencos que se tegan que crear en WF
        
         info.items.forEach(i => {
-       
+            setTimeout(() => {console.log("this is the 55 message - 3s")}, 3000);
+
             console.log(i);
         // 1. Busco los CC registrados
             CuencoCardsAirtable.forEach(e => {    
@@ -88,10 +87,7 @@ table.select({
                         })
 
 
-
-
-                    console.log("UPDATE : ", e.id);
-                    
+                    log.writerow("De la CC: "+e.id +" se actualizó el nro de cuencos a: "+e.cuencos);                    
                     update = true;
                     }
     
@@ -126,25 +122,37 @@ table.select({
                     collectionId:collectionid,
                     fields: fields
                 })
-               
-            
+                
+                log.writerow("Se creó la CC: "+e.id);
+
             })
             update = true;
         }
-    
+        setTimeout(() => {console.log("this is the 20 message - 3s")}, 3000);
+
     }).then(function() {
         if( update){
         const published = api.publishSite({siteId:siteid,domains:['madrecuenca.uy','www.madrecuenca.uy']});
         published.then(p => console.log(p));
+        } else {
+            console.log("No fue necesario re-publicar el sitio");
         }
-    })
+        setTimeout(() => {console.log("this is the 1 message - 3s")}, 3000);
+
+    }).then(function(){
+        setTimeout(() => {console.log("this is the 0 message - 3s")}, 3000);
+
+
+        if (CuencoCardsAirtable.length === 0){
+            console.log("No hay nuevas entradas");
+            log.writerow("No hay nuevas entradas");
+        }
+    }).catch(err=> console.error(err));
 
 
 
-    if (CuencoCardsAirtable.length === 0){
-        console.log("No hay nuevas entradas");
-    }
-
-});
+  setTimeout(() => {console.log("this is the last message")}, 5000);
+}); 
 
 
+                log.writerow("TEST  ");

@@ -1,3 +1,5 @@
+var log = require('./log-cli.js');
+
 class Card {
     constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
       this.id = ccid;
@@ -57,7 +59,9 @@ table.select({
 
     if (CuencoCardsAirtable.length === 0){
         console.log("No hay nuevas entradas");
+        log.writerow("No hay nuevas entradas");
     }
+    
 
 });
 

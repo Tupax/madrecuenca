@@ -160,11 +160,31 @@ items.then((info) => {
 
 
 // cuencos x8
-getItems('61f90e5c7a457c3409dff91d');
+// getItems('61f90e5c7a457c3409dff91d');
 
 
 
+function displayCollections(siteId) {
+    const collections = api.collections({ siteId: siteId });
+  
+    collections.then((c) => {
+      var collectionId = c[0]._id;
+  
+      console.log('First collection id = ' + collectionId);
+  
+      displayItems(collectionId);
+    });
+  }
 
+
+// Promise <[ Item ]>
+function displayItems(collectionId) {
+    const items = api.items({ collectionId: collectionId }, { limit: 100 });
+  
+    items.then((i) => console.log(i));
+  }
+  
+displayCollections(siteid);
 
 
 //callectionid = 61f90e5c7a457c3409dff91d
