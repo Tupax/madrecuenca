@@ -10,7 +10,7 @@ fs.writeFile(filename, text +" --> ["+dnow.toLocaleString() +"]\n",{ flag: "a"},
     if(err) {
         return console.log(err);
     }else {
-    console.log("The log was saved!");
+    // console.log("The log was saved!");
     }
 });
 

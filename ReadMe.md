@@ -66,6 +66,17 @@ Ahora el el archivo update.js hace log en /tmp/madrecuenca.log y en ~/Smallpotio
 #Commandos utiles para debuggear
 cat /var/log/syslog
 
+
+# set el cron
+crontab -e edit
+crontab -l list
+
+# log
+cat /tmp/logcli
+cat /tmp/outputscript.log
+
+# run
+./scriptTest.sh
 ```
 
 

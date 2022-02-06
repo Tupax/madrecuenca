@@ -50,7 +50,7 @@ table.select({
 }, function done(err) {
     
     if (err) { console.error(err); return; }
-    console.log("Airtable data");
+    console.log("Airtable data arrive!");
 
 
 
@@ -60,14 +60,13 @@ table.select({
 
     const items = api.items({ collectionId: collectionid }, { limit: 100 });
     items.then((info) => {
-        console.log("WF data");
+        console.log("WF data incoming ...");
         // Filtar cuencos que sea necesario actualizar en WF
         // Filtrar cuencos que se tegan que crear en WF
-       
         info.items.forEach(i => {
-            setTimeout(() => {console.log("this is the 55 message - 3s")}, 3000);
+            // setTimeout(() => {console.log("this is the 55 message - 3s")}, 3000);
 
-            console.log(i);
+            console.log(i.slug);
         // 1. Busco los CC registrados
             CuencoCardsAirtable.forEach(e => {    
                 if(i.name == e.id){
@@ -85,8 +84,6 @@ table.select({
                         fields: fields
                         
                         })
-
-
                     log.writerow("De la CC: "+e.id +" se actualizó el nro de cuencos a: "+e.cuencos);                    
                     update = true;
                     }
@@ -98,11 +95,8 @@ table.select({
         });
     
         if (CuencoCardsAirtable.length > 0){
-            // Crear un item nuevo en WF por cada item nuevo
-    
+            // Crear un item nuevo en WF por cada item nuevo porque no esta registrado
         
-    
-            
             CuencoCardsAirtable.forEach(e=> {
                 e.fecha = new Date(e.fecha);
                 e.fecha = e.fecha.toISOString();
@@ -128,7 +122,6 @@ table.select({
             })
             update = true;
         }
-        setTimeout(() => {console.log("this is the 20 message - 3s")}, 3000);
 
     }).then(function() {
         if( update){
@@ -137,22 +130,18 @@ table.select({
         } else {
             console.log("No fue necesario re-publicar el sitio");
         }
-        setTimeout(() => {console.log("this is the 1 message - 3s")}, 3000);
 
     }).then(function(){
-        setTimeout(() => {console.log("this is the 0 message - 3s")}, 3000);
 
 
         if (CuencoCardsAirtable.length === 0){
-            console.log("No hay nuevas entradas");
+            console.log("No hay nuevas entradas\n ----- END ------");
             log.writerow("No hay nuevas entradas");
         }
     }).catch(err=> console.error(err));
 
 
 
-  setTimeout(() => {console.log("this is the last message")}, 5000);
 }); 
 
 
-                log.writerow("TEST  ");

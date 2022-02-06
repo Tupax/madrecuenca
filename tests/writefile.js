@@ -17,7 +17,7 @@ let dnow = Date();
 
 var filename = "/tmp/t";
 
-fs.writeFile(filename,  "Write file --> ["+dnow.toLocaleString() +"]Suma:" +vsum + "- ID :"+ record.id+"\n",{ flag: "a"}, function(err) {
+fs.writeFile(filename,  "Airtable func --> ["+dnow.toLocaleString() +"]Suma:" +vsum + "- ID :"+ record.id+"\n",{ flag: "a"}, function(err) {
     if(err) {
         return console.log(err);
     }else {
@@ -52,7 +52,7 @@ items.then((info) => {
 
     var filename = "/tmp/t";
     
-    fs.writeFile(filename,  "WEbflow file --> ["+dnow.toLocaleString() +"]- ID :"+"\n",{ flag: "a"}, function(err) {
+    fs.writeFile(filename,  "Webflow func --> ["+dnow.toLocaleString() +"]- ID :"+"\n",{ flag: "a"}, function(err) {
         if(err) {
             return console.log(err);
         }else {
