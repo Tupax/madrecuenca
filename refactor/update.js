@@ -1,17 +1,8 @@
-var log = require('./log-cli.js');
 
 
-class Card {
-    constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
-      this.id = ccid;
-      this.cedula = cedula;
-      this.cuencos = parseInt(cuencos);
-      this.url = url;
-      this.phone = phone;
-      this.fecha = fecha;
-      this.recipiente = parseInt(recipiente);
-    }
-}
+var log = require('/home/tupax/SmallPotion/Webflow/madrecuenca/log-cli.js');
+
+var Card = require('./card');
 
 
 
@@ -44,7 +35,7 @@ table.select({
     }
     catch(e){ console.log('error inside eachPage => ',e)}
 
-    
+
     fetchNextPage();
 
 }, function done(err) {

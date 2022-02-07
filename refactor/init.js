@@ -1,11 +1,13 @@
-class Task {
-    constructor(name,Deadline,Status) {
-        this.name = name;
-        this.Deadline = Deadline;
-        this.Status = Status;
-        // this.recipiente = parseInt(recipiente);
-      }
-}
+// class Task {
+//     constructor(name,Deadline,Status) {
+//         this.name = name;
+//         this.Deadline = Deadline;
+//         this.Status = Status;
+//         // this.recipiente = parseInt(recipiente);
+//       }
+// }
+var giveClass = require('./taskclass');
+
 
 const dataAirtable = [];
 var Airtable = require('airtable');
@@ -22,7 +24,7 @@ base('Tasks').select({
 
     try {
 
-    dataAirtable.push (records.map( db => new Task(db.get('Name'),null,db.get('Deadline'),db.get('Status')) ));
+    dataAirtable.push (records.map( db => new giveClass(db.get('Name'),null,db.get('Deadline'),db.get('Status')) ));
 
     // To fetch the next page of records, call `fetchNextPage`.
     // If there are more records, `page` will get called again.

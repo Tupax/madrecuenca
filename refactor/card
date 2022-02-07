@@ -1,0 +1,13 @@
+class Card {
+    constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
+      this.id = ccid;
+      this.cedula = cedula;
+      this.cuencos = parseInt(cuencos);
+      this.url = url;
+      this.phone = phone;
+      this.fecha = fecha;
+      this.recipiente = parseInt(recipiente);
+    }
+}
+
+module.exports = Card ;

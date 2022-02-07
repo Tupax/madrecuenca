@@ -1,0 +1,14 @@
+
+class Task {
+    constructor(name,Deadline,Status) {
+        this.name = name;
+        this.Deadline = Deadline;
+        this.Status = Status;
+        // this.recipiente = parseInt(recipiente);
+      }
+
+    }
+
+
+
+module.exports = Task ;
