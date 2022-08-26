@@ -2,14 +2,15 @@ var log = require('./log-cli.js');
 
 
 class Card {
-    constructor(ccid, cedula,cuencos,url,phone,fecha,recipiente) {
+    constructor(ccid,nombre, cedula,cuencos,url,phone,fecha,descuencos) {
       this.id = ccid;
+      this.nombre = nombre;
       this.cedula = cedula;
       this.cuencos = parseInt(cuencos);
       this.url = url;
       this.phone = phone;
       this.fecha = fecha;
-      this.recipiente = parseInt(recipiente);
+      this.descuencos = parseInt(descuencos);
     }
 }
 
@@ -32,15 +33,15 @@ const siteid = '61f00bdd2265e92582e18224';
 
 table.select({
     view: "Suscripción",
-    fields: ["CC#","Cédula", "Cuencos", "Last Modified","URLs","Phone","Fecha","Descuento Envase"],
+    fields: ["CC#","Nombre","Cédula", "Cuencos", "Last Modified","URLs","Phone","Fecha","Descuencos"],
     filterByFormula: "IS_AFTER({Last modified},TODAY())"
 }).eachPage(function page(records, fetchNextPage) {
     
     records.forEach(function(record) {
 
         
-        let card = new Card(record.get('CC#'),record.get('Cédula'),record.get('Cuencos'),record.get('URLs'),record.get('Phone'),record.get('Fecha'),record.get('Descuento Envase'));
-
+        let card = new Card(record.get('CC#'),record.get('Nombre'),record.get('Cédula'),record.get('Cuencos'),record.get('URLs'),record.get('Phone'),record.get('Fecha'),record.get('Descuencos'));
+        console.log(card);
         CuencoCardsAirtable.push(card);
         
     });
@@ -54,7 +55,7 @@ table.select({
 
 
 
-    let collectionid = '61f90e5c7a457c3409dff91d';
+    let collectionid = '62aafa1fcac1929378fe2822';
     let update = false;
 
 
@@ -68,80 +69,82 @@ table.select({
 
             console.log(i.slug);
         // 1. Busco los CC registrados
-            CuencoCardsAirtable.forEach(e => {    
-                if(i.name == e.id){
-                
-                    if(i.cuencos !== e.cuencos){    
-                    // hacer update de cuenco
-                    // let  fields = {}
-                    let fields = {
-                        'cuencos': e.cuencos
-
-                    }
-                    api.patchItem({
-                        collectionId:collectionid,
-                        itemId: i._id   ,
-                        fields: fields
-                        
-                        })
-                    log.writerow("De la CC: "+e.id +" se actualizó el nro de cuencos a: "+e.cuencos);                    
-                    update = true;
-                    }
-    
-                // Sino soloQuito esta cc del array porque ya esta realizado
-                CuencoCardsAirtable = CuencoCardsAirtable.filter((element) => element.id !== i.name); 
-                }   
-            });
-        });
-    
-        if (CuencoCardsAirtable.length > 0){
-            // Crear un item nuevo en WF por cada item nuevo porque no esta registrado
-        
-            CuencoCardsAirtable.forEach(e=> {
-                e.fecha = new Date(e.fecha);
-                e.fecha = e.fecha.toISOString();
-                let slug = e.id.substring(e.id.length - 5);
-                let fields= {
-                    'fecha': e.fecha.toString(),
-                    '_archived': false,
-                    '_draft': false,
-                    'cedula': e.cedula,
-                    'phone': e.phone.toString(),
-                    'name':e.id,
-                    'slug': slug,
+        CuencoCardsAirtable.forEach(e => {    
+            if(i.name == e.id){
+            
+                if(i.cuencos !== e.cuencos){    
+                // hacer update de cuenco
+                // let  fields = {}
+                let fields = {
                     'cuencos': e.cuencos,
-                  
+                    'descuencos': e.descuencos,
+                    'cliente':e.nombre
+
                 }
-                api.createItem({
+                api.patchItem({
                     collectionId:collectionid,
+                    itemId: i._id,
                     fields: fields
-                })
-                
-                log.writerow("Se creó la CC: "+e.id);
+                    
+                    })
+                log.writerow("De la CC: "+e.id +" se actualizó el nro de cuencos a: "+e.cuencos + " y Descuencos a: "+e.descuencos);                    
+                update = true;
+                }
 
+            // Sino soloQuito esta cc del array porque ya esta realizado
+            CuencoCardsAirtable = CuencoCardsAirtable.filter((element) => element.id !== i.name); 
+            }   
+        });
+    });
+
+    if (CuencoCardsAirtable.length > 0){
+        // Crear un item nuevo en WF por cada item nuevo porque no esta registrado
+    
+        CuencoCardsAirtable.forEach(e=> {
+            e.fecha = new Date(e.fecha);
+            e.fecha = e.fecha.toISOString();
+            let slug = e.id.substring(e.id.length - 5);
+            let fields= {
+                'fecha': e.fecha.toString(),
+                '_archived': false,
+                '_draft': false,
+                'cedula': e.cedula,
+                'phone': e.phone.toString(),
+                'name':e.id,
+                'slug': slug,
+                'cuencos': e.cuencos,
+                'descuencos': e.descuencos,
+                'cliente':e.nombre
+            }
+            api.createItem({
+                collectionId:collectionid,
+                fields: fields
             })
-            update = true;
-        }
+            
+            log.writerow("Se creó la CC: "+e.id);
 
-    }).then(function() {
-        if( update){
-        const published = api.publishSite({siteId:siteid,domains:['madrecuenca.uy','www.madrecuenca.uy']});
-        published.then(p => console.log(p));
-        } else {
-            console.log("No fue necesario re-publicar el sitio");
-        }
+        })
+        update = true;
+    }
 
-    }).then(function(){
+}).then(function() {
+    if( update){
+    const published = api.publishSite({siteId:siteid,domains:['madrecuenca.uy','www.madrecuenca.uy']});
+    published.then(p => console.log(p));
+    } else {
+        console.log("No fue necesario re-publicar el sitio");
+    }
+
+}).then(function(){
 
 
-        if (CuencoCardsAirtable.length === 0){
-            console.log("No hay nuevas entradas\n ----- END ------");
-            log.writerow("No hay nuevas entradas");
-        }
-    }).catch(err=> console.error(err));
+    if (CuencoCardsAirtable.length === 0){
+        console.log("No hay nuevas entradas\n ----- END ------");
+        log.writerow("No hay nuevas entradas");
+    }
+}).catch(err=> console.error(err));
 
 
 
 }); 
-
 
